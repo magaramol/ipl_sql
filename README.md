@@ -14,7 +14,7 @@ order by t.battingteam, t.rnk
 ```
 
 
-## v kohli  cumm avg for kohli
+## v kohli  rolling  avg for kohli
 
 
 ```sql
