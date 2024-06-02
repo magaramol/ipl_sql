@@ -1,46 +1,97 @@
-# ipl data analysuisi
+Here is the markdown file with only cricket-related content:
 
-## top 5 batsman for each team rank desc
+# IPL Data Analysis
+
+## Top 5 Batsmen for Each Team (Ranked Descending)
 
 ```sql
-select * from (select 
-battingteam,batter,sum(batsman_run) as rn,
-dense_rank() over (partition by battingteam order by rn desc ) as rnk
-from ipl
-group by battingteam,batter
+SELECT * 
+FROM (
+    SELECT 
+        battingteam,
+        batter,
+        SUM(batsman_run) AS rn,
+        DENSE_RANK() OVER (PARTITION BY battingteam ORDER BY rn DESC) AS rnk
+    FROM ipl
+    GROUP BY battingteam, batter
 ) t
-where t.rnk<6
-order by t.battingteam, t.rnk
+WHERE t.rnk < 6
+ORDER BY t.battingteam, t.rnk;
 ```
 
-
-## v kohli  rolling  avg for kohli
-
+## V. Kohli Rolling Average
 
 ```sql
+SELECT * 
+FROM (
+    SELECT 
+        CONCAT("Match-", CAST(ROW_NUMBER() OVER (ORDER BY ID) AS CHAR)) AS 'match_no',
+        SUM(batsman_run) AS 'runs_scored',
+        SUM(SUM(batsman_run)) OVER w AS 'career_runs',
+        AVG(SUM(batsman_run)) OVER w AS 'career_avg',
+        AVG(SUM(batsman_run)) OVER (ROWS BETWEEN 9 PRECEDING AND CURRENT ROW) AS 'rolling_avg'
+    FROM ipl
+    WHERE batter = 'V Kohli'
+    GROUP BY ID
+    WINDOW w AS (ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+) t;
+```
 
-SELECT * FROM (SELECT 
-CONCAT("Match-",CAST(ROW_NUMBER() OVER(ORDER BY ID) AS CHAR)) AS 'match_no',
-SUM(batsman_run) AS 'runs_scored',
-SUM(SUM(batsman_run)) OVER w AS 'career_runs',
-AVG(SUM(batsman_run)) OVER w AS 'career_avg',
-AVG(SUM(batsman_run)) OVER(ROWS BETWEEN 9 PRECEDING AND CURRENT ROW) AS 'rolling_avg'
-FROM ipl
+## Cumulative Runs Over Matches
+
+```sql
+SELECT 
+    ROW_NUMBER() OVER (ORDER BY id) AS match_num,
+    SUM(batsman_run) AS match_runs,
+    SUM(SUM(batsman_run)) OVER (ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS cr_run
+FROM data
 WHERE batter = 'V Kohli'
-GROUP BY ID
-WINDOW w AS (ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)) t
-
+GROUP BY id;
 ```
 
-## cumm runs over match
+## Top 5 Bowlers by Wickets
 
 ```sql
-select row_number() over(order by id) as match_num,
-sum(batsman_run) match_runs,
-sum(sum(batsman_run)) over(rows between unbounded preceding and current row) as cr_run
-from data
-where batter = 'V Kohli'
+SELECT * 
+FROM (
+    SELECT 
+        bowlingteam,
+        bowler,
+        SUM(is_wicket) AS wickets
+    FROM ipl
+    GROUP BY bowlingteam, bowler
+) t
+WHERE t.rnk < 6
+ORDER BY t.bowlingteam, t.rnk;
+```
 
-group by id
+## Cumulative Runs for Specific Batsmen
 
+```sql
+SELECT 
+    SUM(batsman_run),
+    ROW_NUMBER() OVER (ORDER BY ID) AS mt_num,
+    SUM(SUM(batsman_run)) OVER (ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS cum_run
+FROM data
+WHERE batter IN ('SA Yadav', 'SA Yadav')
+GROUP BY ID;
+```
+
+## V. Kohli Match-wise Runs with Averages
+
+```sql
+SELECT * 
+FROM (
+    SELECT
+        ROW_NUMBER() OVER (ORDER BY ID) AS match_no,
+        SUM(batsman_run),
+        SUM(SUM(batsman_run)) OVER w AS cum_run,
+        AVG(SUM(batsman_run)) OVER w AS avg_run,
+        AVG(SUM(batsman_run)) OVER (ROWS BETWEEN 9 PRECEDING AND CURRENT ROW) AS rn_avg_run
+    FROM data
+    WHERE batter = 'V Kohli'
+    GROUP BY ID
+    WINDOW w AS (ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+) t;
+-- WHERE t.match_no IN (50, 100, 200);
 ```
