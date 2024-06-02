@@ -1,8 +1,10 @@
-Here is the markdown file with only cricket-related content:
+Here is the markdown file with descriptions added for each query:
 
 # IPL Data Analysis
 
 ## Top 5 Batsmen for Each Team (Ranked Descending)
+
+This query retrieves the top 5 batsmen for each team, ranked by the total runs scored. The `DENSE_RANK` function is used to rank the batsmen within each team based on their total runs.
 
 ```sql
 SELECT * 
@@ -20,6 +22,8 @@ ORDER BY t.battingteam, t.rnk;
 ```
 
 ## V. Kohli Rolling Average
+
+This query calculates V. Kohli's rolling average runs scored over his career. It shows the match number, runs scored in each match, cumulative runs, career average, and a rolling average over the last 10 matches.
 
 ```sql
 SELECT * 
@@ -39,6 +43,8 @@ FROM (
 
 ## Cumulative Runs Over Matches
 
+This query calculates the cumulative runs scored by V. Kohli over his matches. It shows the match number, runs scored in each match, and the cumulative runs up to that match.
+
 ```sql
 SELECT 
     ROW_NUMBER() OVER (ORDER BY id) AS match_num,
@@ -50,6 +56,8 @@ GROUP BY id;
 ```
 
 ## Top 5 Bowlers by Wickets
+
+This query retrieves the top 5 bowlers for each team, ranked by the total number of wickets taken. The `DENSE_RANK` function is used to rank the bowlers within each team based on their total wickets.
 
 ```sql
 SELECT * 
@@ -67,6 +75,8 @@ ORDER BY t.bowlingteam, t.rnk;
 
 ## Cumulative Runs for Specific Batsmen
 
+This query calculates the cumulative runs scored by the specified batsmen (SA Yadav in this case) over their matches. It shows the match number, runs scored in each match, and the cumulative runs up to that match.
+
 ```sql
 SELECT 
     SUM(batsman_run),
@@ -78,6 +88,8 @@ GROUP BY ID;
 ```
 
 ## V. Kohli Match-wise Runs with Averages
+
+This query calculates V. Kohli's match-wise runs, cumulative runs, career average, and a rolling average over the last 10 matches. It shows the match number, runs scored in each match, cumulative runs, career average, and the rolling average.
 
 ```sql
 SELECT * 
