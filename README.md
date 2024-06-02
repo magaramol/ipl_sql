@@ -1,5 +1,3 @@
-Here is the markdown file with descriptions and the data source added:
-
 # IPL Data Analysis
 
 **Data Source:** [IPL Ball by Ball Data (2008-2022)](https://github.com/magaramol/ipl_sql/blob/main/DATA/IPL_Ball_by_Ball_2008_2022.csv)
